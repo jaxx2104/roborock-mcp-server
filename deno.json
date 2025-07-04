@@ -1,0 +1,27 @@
+{
+  "name": "roborock-mcp-server",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol server for controlling Roborock vacuum cleaners",
+  "author": "Roborock MCP Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaxx2104/roborock-mcp.git"
+  },
+  "keywords": ["roborock", "vacuum", "mcp", "claude", "smart-home", "automation"],
+  "exports": "./src/index.ts",
+  "imports": {
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^0.5.0"
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-env src/index.ts",
+    "dev": "deno run --allow-net --allow-read --allow-env --watch src/index.ts",
+    "check": "deno check src/index.ts",
+    "lint": "deno lint",
+    "fmt": "deno fmt"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.ns", "dom"]
+  }
+}
