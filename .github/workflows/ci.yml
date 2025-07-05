@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        deno-version: ["1.37.x", "1.38.x"]
+        deno-version: ["2.x"]
         python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
@@ -58,7 +58,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: 1.37.x
+          deno-version: 2.x
 
       - name: Security audit
         run: deno check src/index.ts
