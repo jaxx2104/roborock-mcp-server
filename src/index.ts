@@ -5,7 +5,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  Tool,
+  type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
 class RoborockMCPServer {
@@ -21,7 +21,7 @@ class RoborockMCPServer {
         capabilities: {
           tools: {},
         },
-      }
+      },
     );
 
     this.setupToolHandlers();
@@ -72,7 +72,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -85,7 +86,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -98,7 +100,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -111,7 +114,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -124,7 +128,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -137,7 +142,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -150,7 +156,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
           },
         },
@@ -163,7 +170,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
             zones: {
               type: "array",
@@ -187,7 +195,8 @@ class RoborockMCPServer {
           properties: {
             device_id: {
               type: "string",
-              description: "Device ID of the vacuum (optional if only one device)",
+              description:
+                "Device ID of the vacuum (optional if only one device)",
             },
             room_ids: {
               type: "array",
@@ -204,9 +213,9 @@ class RoborockMCPServer {
   private async getVacuumStatus(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
+
       const status = await this.executeRoborockCommand("get_status", deviceId);
-      
+
       return {
         content: [
           {
@@ -220,7 +229,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error getting vacuum status: ${error.message}`,
+            text: `Error getting vacuum status: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -231,14 +242,19 @@ class RoborockMCPServer {
   private async startCleaning(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
-      const result = await this.executeRoborockCommand("start_cleaning", deviceId);
-      
+
+      const result = await this.executeRoborockCommand(
+        "start_cleaning",
+        deviceId,
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: `Cleaning started successfully. Result: ${JSON.stringify(result)}`,
+            text: `Cleaning started successfully. Result: ${
+              JSON.stringify(result)
+            }`,
           },
         ],
       };
@@ -247,7 +263,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error starting cleaning: ${error.message}`,
+            text: `Error starting cleaning: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -258,14 +276,19 @@ class RoborockMCPServer {
   private async stopCleaning(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
-      const result = await this.executeRoborockCommand("stop_cleaning", deviceId);
-      
+
+      const result = await this.executeRoborockCommand(
+        "stop_cleaning",
+        deviceId,
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: `Cleaning stopped successfully. Result: ${JSON.stringify(result)}`,
+            text: `Cleaning stopped successfully. Result: ${
+              JSON.stringify(result)
+            }`,
           },
         ],
       };
@@ -274,7 +297,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error stopping cleaning: ${error.message}`,
+            text: `Error stopping cleaning: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -285,14 +310,19 @@ class RoborockMCPServer {
   private async pauseCleaning(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
-      const result = await this.executeRoborockCommand("pause_cleaning", deviceId);
-      
+
+      const result = await this.executeRoborockCommand(
+        "pause_cleaning",
+        deviceId,
+      );
+
       return {
         content: [
           {
             type: "text",
-            text: `Cleaning paused successfully. Result: ${JSON.stringify(result)}`,
+            text: `Cleaning paused successfully. Result: ${
+              JSON.stringify(result)
+            }`,
           },
         ],
       };
@@ -301,7 +331,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error pausing cleaning: ${error.message}`,
+            text: `Error pausing cleaning: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -312,9 +344,12 @@ class RoborockMCPServer {
   private async returnToDock(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
-      const result = await this.executeRoborockCommand("return_to_dock", deviceId);
-      
+
+      const result = await this.executeRoborockCommand(
+        "return_to_dock",
+        deviceId,
+      );
+
       return {
         content: [
           {
@@ -328,7 +363,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error returning to dock: ${error.message}`,
+            text: `Error returning to dock: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -339,14 +376,16 @@ class RoborockMCPServer {
   private async locateVacuum(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
+
       const result = await this.executeRoborockCommand("find_robot", deviceId);
-      
+
       return {
         content: [
           {
             type: "text",
-            text: `Locate command sent successfully. Result: ${JSON.stringify(result)}`,
+            text: `Locate command sent successfully. Result: ${
+              JSON.stringify(result)
+            }`,
           },
         ],
       };
@@ -355,7 +394,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error locating vacuum: ${error.message}`,
+            text: `Error locating vacuum: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -366,14 +407,16 @@ class RoborockMCPServer {
   private async getMap(args: any) {
     try {
       const deviceId = args?.device_id || "default";
-      
+
       const result = await this.executeRoborockCommand("get_map", deviceId);
-      
+
       return {
         content: [
           {
             type: "text",
-            text: `Map data retrieved. Result: ${JSON.stringify(result, null, 2)}`,
+            text: `Map data retrieved. Result: ${
+              JSON.stringify(result, null, 2)
+            }`,
           },
         ],
       };
@@ -382,7 +425,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error getting map: ${error.message}`,
+            text: `Error getting map: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -394,14 +439,18 @@ class RoborockMCPServer {
     try {
       const deviceId = args?.device_id || "default";
       const zones = args.zones;
-      
-      const result = await this.executeRoborockCommand("zone_clean", deviceId, { zones });
-      
+
+      const result = await this.executeRoborockCommand("zone_clean", deviceId, {
+        zones,
+      });
+
       return {
         content: [
           {
             type: "text",
-            text: `Zone cleaning started. Zones: ${JSON.stringify(zones)}. Result: ${JSON.stringify(result)}`,
+            text: `Zone cleaning started. Zones: ${
+              JSON.stringify(zones)
+            }. Result: ${JSON.stringify(result)}`,
           },
         ],
       };
@@ -410,7 +459,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error starting zone cleaning: ${error.message}`,
+            text: `Error starting zone cleaning: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -422,14 +473,18 @@ class RoborockMCPServer {
     try {
       const deviceId = args?.device_id || "default";
       const roomIds = args.room_ids;
-      
-      const result = await this.executeRoborockCommand("room_clean", deviceId, { room_ids: roomIds });
-      
+
+      const result = await this.executeRoborockCommand("room_clean", deviceId, {
+        room_ids: roomIds,
+      });
+
       return {
         content: [
           {
             type: "text",
-            text: `Room cleaning started. Rooms: ${JSON.stringify(roomIds)}. Result: ${JSON.stringify(result)}`,
+            text: `Room cleaning started. Rooms: ${
+              JSON.stringify(roomIds)
+            }. Result: ${JSON.stringify(result)}`,
           },
         ],
       };
@@ -438,7 +493,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Error starting room cleaning: ${error.message}`,
+            text: `Error starting room cleaning: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
           },
         ],
         isError: true,
@@ -446,9 +503,13 @@ class RoborockMCPServer {
     }
   }
 
-  private async executeRoborockCommand(command: string, deviceId: string, params?: any): Promise<any> {
+  private async executeRoborockCommand(
+    command: string,
+    deviceId: string,
+    params?: any,
+  ): Promise<any> {
     const pythonScript = this.generatePythonScript(command, deviceId, params);
-    
+
     const process = new Deno.Command("python3", {
       args: ["-c", pythonScript],
       stdout: "piped",
@@ -470,9 +531,13 @@ class RoborockMCPServer {
     }
   }
 
-  private generatePythonScript(command: string, deviceId: string, params?: any): string {
+  private generatePythonScript(
+    command: string,
+    _deviceId: string,
+    params?: any,
+  ): string {
     const paramsJson = params ? JSON.stringify(params) : "{}";
-    
+
     return `
 import asyncio
 import json
@@ -534,7 +599,7 @@ if __name__ == "__main__":
   async run(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
+
     console.error("Roborock MCP Server running on stdio");
   }
 }

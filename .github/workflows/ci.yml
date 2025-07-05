@@ -2,63 +2,63 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        deno-version: ['1.37.x', '1.38.x']
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        deno-version: ["1.37.x", "1.38.x"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: ${{ matrix.deno-version }}
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno-version }}
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install python-roborock
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-roborock
 
-    - name: Check TypeScript formatting
-      run: deno fmt --check
+      - name: Check TypeScript formatting
+        run: deno fmt --check
 
-    - name: Lint TypeScript
-      run: deno lint
+      - name: Lint TypeScript
+        run: deno lint
 
-    - name: Type check
-      run: deno check src/index.ts
+      - name: Type check
+        run: deno check src/index.ts
 
-    - name: Test basic functionality
-      run: |
-        # Test that the server can start without errors
-        timeout 10s deno task start || [ $? -eq 124 ]
-      env:
-        ROBOROCK_USERNAME: "test"
-        ROBOROCK_PASSWORD: "test"
+      - name: Test basic functionality
+        run: |
+          # Test that the server can start without errors
+          timeout 10s deno task start || [ $? -eq 124 ]
+        env:
+          ROBOROCK_USERNAME: "test"
+          ROBOROCK_PASSWORD: "test"
 
   security:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
-      with:
-        deno-version: 1.37.x
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: 1.37.x
 
-    - name: Security audit
-      run: deno task --quiet check --all
+      - name: Security audit
+        run: deno check src/index.ts

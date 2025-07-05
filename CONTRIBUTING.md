@@ -1,6 +1,7 @@
 # Contributing to Roborock MCP Server
 
-Thank you for your interest in contributing to the Roborock MCP Server! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to the Roborock MCP Server! This
+document provides guidelines for contributing to the project.
 
 ## Development Setup
 
@@ -57,7 +58,8 @@ Thank you for your interest in contributing to the Roborock MCP Server! This doc
 ## Code Guidelines
 
 - **TypeScript**: Use strict TypeScript with proper type annotations
-- **Error Handling**: Always handle errors gracefully and provide meaningful error messages
+- **Error Handling**: Always handle errors gracefully and provide meaningful
+  error messages
 - **Logging**: Use console.error for debugging information sent to stderr
 - **Security**: Never log or expose sensitive information like credentials
 
@@ -71,6 +73,7 @@ Thank you for your interest in contributing to the Roborock MCP Server! This doc
 ## Reporting Issues
 
 When reporting issues, please include:
+
 - Your operating system and version
 - Deno version
 - Python version
@@ -80,11 +83,14 @@ When reporting issues, please include:
 
 ## Feature Requests
 
-Before submitting a feature request, please check if it's already been requested. When submitting:
+Before submitting a feature request, please check if it's already been
+requested. When submitting:
+
 - Describe the feature in detail
 - Explain the use case
 - Consider the impact on existing functionality
 
 ## Code of Conduct
 
-Please be respectful and constructive in all interactions. We're all here to improve the project together.
+Please be respectful and constructive in all interactions. We're all here to
+improve the project together.

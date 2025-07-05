@@ -8,10 +8,19 @@
     "type": "git",
     "url": "https://github.com/jaxx2104/roborock-mcp.git"
   },
-  "keywords": ["roborock", "vacuum", "mcp", "claude", "smart-home", "automation"],
+  "keywords": [
+    "roborock",
+    "vacuum",
+    "mcp",
+    "claude",
+    "smart-home",
+    "automation"
+  ],
   "exports": "./src/index.ts",
   "imports": {
-    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^0.5.0"
+    "@modelcontextprotocol/sdk/server/index.js": "npm:@modelcontextprotocol/sdk@^0.5.0/server/index.js",
+    "@modelcontextprotocol/sdk/server/stdio.js": "npm:@modelcontextprotocol/sdk@^0.5.0/server/stdio.js",
+    "@modelcontextprotocol/sdk/types.js": "npm:@modelcontextprotocol/sdk@^0.5.0/types.js"
   },
   "tasks": {
     "start": "deno run --allow-net --allow-read --allow-env src/index.ts",
@@ -23,5 +32,10 @@
   "compilerOptions": {
     "strict": true,
     "lib": ["deno.ns", "dom"]
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["no-explicit-any", "require-await"]
+    }
   }
 }

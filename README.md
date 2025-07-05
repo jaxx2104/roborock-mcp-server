@@ -1,6 +1,7 @@
 # Roborock MCP Server
 
-A Model Context Protocol (MCP) server for controlling Roborock vacuum cleaners, enabling Claude to interact with and control your robot vacuum.
+A Model Context Protocol (MCP) server for controlling Roborock vacuum cleaners,
+enabling Claude to interact with and control your robot vacuum.
 
 ## Features
 
@@ -54,6 +55,7 @@ deno task dev
 ## Available Tools
 
 ### vacuum_status
+
 Get the current status of the vacuum.
 
 ```json
@@ -66,6 +68,7 @@ Get the current status of the vacuum.
 ```
 
 ### start_cleaning
+
 Start cleaning operation.
 
 ```json
@@ -78,6 +81,7 @@ Start cleaning operation.
 ```
 
 ### stop_cleaning
+
 Stop the current cleaning operation.
 
 ```json
@@ -90,6 +94,7 @@ Stop the current cleaning operation.
 ```
 
 ### pause_cleaning
+
 Pause the current cleaning operation.
 
 ```json
@@ -102,6 +107,7 @@ Pause the current cleaning operation.
 ```
 
 ### return_to_dock
+
 Send the vacuum back to its charging dock.
 
 ```json
@@ -114,6 +120,7 @@ Send the vacuum back to its charging dock.
 ```
 
 ### locate_vacuum
+
 Play a sound to locate the vacuum.
 
 ```json
@@ -126,6 +133,7 @@ Play a sound to locate the vacuum.
 ```
 
 ### get_map
+
 Retrieve map data from the vacuum.
 
 ```json
@@ -138,6 +146,7 @@ Retrieve map data from the vacuum.
 ```
 
 ### zone_clean
+
 Clean specific zones defined by coordinates.
 
 ```json
@@ -151,6 +160,7 @@ Clean specific zones defined by coordinates.
 ```
 
 ### room_clean
+
 Clean specific rooms by room IDs.
 
 ```json
@@ -165,14 +175,21 @@ Clean specific rooms by room IDs.
 
 ## Claude Desktop Configuration
 
-To use with Claude Desktop, add the following to your `claude_desktop_config.json`:
+To use with Claude Desktop, add the following to your
+`claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "roborock": {
       "command": "deno",
-      "args": ["run", "--allow-net", "--allow-read", "--allow-env", "/path/to/roborock-mcp/src/index.ts"],
+      "args": [
+        "run",
+        "--allow-net",
+        "--allow-read",
+        "--allow-env",
+        "/path/to/roborock-mcp/src/index.ts"
+      ],
       "env": {
         "ROBOROCK_USERNAME": "your-username",
         "ROBOROCK_PASSWORD": "your-password"
@@ -184,9 +201,11 @@ To use with Claude Desktop, add the following to your `claude_desktop_config.jso
 
 ## Notes
 
-- You must set the `ROBOROCK_USERNAME` and `ROBOROCK_PASSWORD` environment variables
+- You must set the `ROBOROCK_USERNAME` and `ROBOROCK_PASSWORD` environment
+  variables
 - If you have multiple devices, the first device will be used by default
-- Some newer Roborock models (Q10, Q7, etc.) may not be supported depending on the python-roborock library compatibility
+- Some newer Roborock models (Q10, Q7, etc.) may not be supported depending on
+  the python-roborock library compatibility
 
 ## Contributing
 
