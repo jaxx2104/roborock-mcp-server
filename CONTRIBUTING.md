@@ -6,7 +6,7 @@ document provides guidelines for contributing to the project.
 ## Development Setup
 
 1. **Prerequisites**
-   - Deno 1.37+
+   - Bun (pinned in `mise.toml`; `mise install` sets it up)
    - Python 3.8+
    - python-roborock package
 
@@ -18,6 +18,7 @@ document provides guidelines for contributing to the project.
 
 3. **Install dependencies**
    ```bash
+   bun install
    pip install python-roborock
    ```
 
@@ -29,7 +30,7 @@ document provides guidelines for contributing to the project.
 
 5. **Run the server**
    ```bash
-   deno task dev
+   bun run dev
    ```
 
 ## Making Changes
@@ -46,8 +47,10 @@ document provides guidelines for contributing to the project.
 
 3. **Test your changes**
    ```bash
-   deno task start
-   # Test the MCP server with Claude Desktop
+   bun run ci      # Formatting and lint (Biome)
+   bun run check   # Type check
+   bun test        # Tests
+   # Then test the MCP server with Claude Desktop
    ```
 
 4. **Commit your changes**
@@ -75,7 +78,7 @@ document provides guidelines for contributing to the project.
 When reporting issues, please include:
 
 - Your operating system and version
-- Deno version
+- Bun version (`bun --version`)
 - Python version
 - Steps to reproduce the issue
 - Expected vs actual behavior

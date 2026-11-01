@@ -21,7 +21,7 @@ happen.
 **Environment (please complete the following information):**
 
 - OS: [e.g. macOS, Windows, Linux]
-- Deno version: [e.g. 1.37.0]
+- Bun version: [e.g. 1.4.4]
 - Python version: [e.g. 3.8.0]
 - python-roborock version: [e.g. 0.35.0]
 

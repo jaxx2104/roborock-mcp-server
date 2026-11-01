@@ -15,11 +15,18 @@ enabling Claude to interact with and control your robot vacuum.
 
 ## Prerequisites
 
-- Deno 1.37+
+- [Bun](https://bun.sh/) (version pinned in `mise.toml` / `mise.lock`; run
+  `mise install` if you use [mise](https://mise.jdx.dev/))
 - Python 3.8+
 - python-roborock package
 
 ## Installation
+
+### Install JavaScript Dependencies
+
+```bash
+bun install
+```
 
 ### Install Python Dependencies
 
@@ -43,13 +50,13 @@ Or copy `.env.example` to `.env` and fill in your credentials.
 ### Start the Server
 
 ```bash
-deno task start
+bun run start
 ```
 
 ### Development Mode
 
 ```bash
-deno task dev
+bun run dev
 ```
 
 ## Available Tools
@@ -182,14 +189,8 @@ To use with Claude Desktop, add the following to your
 {
   "mcpServers": {
     "roborock": {
-      "command": "deno",
-      "args": [
-        "run",
-        "--allow-net",
-        "--allow-read",
-        "--allow-env",
-        "/path/to/roborock-mcp/src/index.ts"
-      ],
+      "command": "bun",
+      "args": ["run", "/path/to/roborock-mcp/src/index.ts"],
       "env": {
         "ROBOROCK_USERNAME": "your-username",
         "ROBOROCK_PASSWORD": "your-password"
@@ -197,6 +198,19 @@ To use with Claude Desktop, add the following to your
     }
   }
 }
+```
+
+If Claude Desktop cannot find `bun` on its `PATH`, use the absolute path
+reported by `which bun` (or `mise which bun`) as `command`.
+
+## Development
+
+```bash
+bun run check   # Type check (tsc --noEmit)
+bun run lint    # Lint with Biome
+bun run fmt     # Format with Biome
+bun run ci      # Formatting + lint check, as run in CI
+bun test        # Run the test suite
 ```
 
 ## Notes

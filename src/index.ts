@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-net --allow-read --allow-env
+#!/usr/bin/env bun
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -252,9 +252,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Cleaning started successfully. Result: ${
-              JSON.stringify(result)
-            }`,
+            text: `Cleaning started successfully. Result: ${JSON.stringify(
+              result,
+            )}`,
           },
         ],
       };
@@ -286,9 +286,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Cleaning stopped successfully. Result: ${
-              JSON.stringify(result)
-            }`,
+            text: `Cleaning stopped successfully. Result: ${JSON.stringify(
+              result,
+            )}`,
           },
         ],
       };
@@ -320,9 +320,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Cleaning paused successfully. Result: ${
-              JSON.stringify(result)
-            }`,
+            text: `Cleaning paused successfully. Result: ${JSON.stringify(
+              result,
+            )}`,
           },
         ],
       };
@@ -383,9 +383,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Locate command sent successfully. Result: ${
-              JSON.stringify(result)
-            }`,
+            text: `Locate command sent successfully. Result: ${JSON.stringify(
+              result,
+            )}`,
           },
         ],
       };
@@ -414,9 +414,11 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Map data retrieved. Result: ${
-              JSON.stringify(result, null, 2)
-            }`,
+            text: `Map data retrieved. Result: ${JSON.stringify(
+              result,
+              null,
+              2,
+            )}`,
           },
         ],
       };
@@ -448,9 +450,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Zone cleaning started. Zones: ${
-              JSON.stringify(zones)
-            }. Result: ${JSON.stringify(result)}`,
+            text: `Zone cleaning started. Zones: ${JSON.stringify(
+              zones,
+            )}. Result: ${JSON.stringify(result)}`,
           },
         ],
       };
@@ -482,9 +484,9 @@ class RoborockMCPServer {
         content: [
           {
             type: "text",
-            text: `Room cleaning started. Rooms: ${
-              JSON.stringify(roomIds)
-            }. Result: ${JSON.stringify(result)}`,
+            text: `Room cleaning started. Rooms: ${JSON.stringify(
+              roomIds,
+            )}. Result: ${JSON.stringify(result)}`,
           },
         ],
       };
@@ -510,20 +512,22 @@ class RoborockMCPServer {
   ): Promise<any> {
     const pythonScript = this.generatePythonScript(command, deviceId, params);
 
-    const process = new Deno.Command("python3", {
-      args: ["-c", pythonScript],
-      stdout: "piped",
-      stderr: "piped",
+    const proc = Bun.spawn(["python3", "-c", pythonScript], {
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
     });
 
-    const { code, stdout, stderr } = await process.output();
+    const [output, errorText, code] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+      proc.exited,
+    ]);
 
     if (code !== 0) {
-      const errorText = new TextDecoder().decode(stderr);
       throw new Error(`Python script failed: ${errorText}`);
     }
 
-    const output = new TextDecoder().decode(stdout);
     try {
       return JSON.parse(output);
     } catch {

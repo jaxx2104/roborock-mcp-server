@@ -1,0 +1,42 @@
+{
+  "name": "roborock-mcp-server",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol server for controlling Roborock vacuum cleaners",
+  "author": "Roborock MCP Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaxx2104/roborock-mcp.git"
+  },
+  "keywords": [
+    "roborock",
+    "vacuum",
+    "mcp",
+    "claude",
+    "smart-home",
+    "automation"
+  ],
+  "type": "module",
+  "private": true,
+  "module": "src/index.ts",
+  "bin": {
+    "roborock-mcp-server": "src/index.ts"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch src/index.ts",
+    "check": "tsc --noEmit",
+    "lint": "biome lint .",
+    "fmt": "biome format --write .",
+    "ci": "biome ci .",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.4",
+    "@types/bun": "^1.4.4",
+    "typescript": "^7.0.2"
+  }
+}
