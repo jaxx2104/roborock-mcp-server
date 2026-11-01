@@ -68,9 +68,10 @@ describe("roborock-mcp-server over stdio", () => {
     );
     expect(result.isError).toBe(true);
     expect(result.content[0]?.type).toBe("text");
-    expect(String(result.content[0]?.text)).toContain(
-      "Error getting vacuum status",
-    );
+    const text = String(result.content[0]?.text);
+    expect(text).toContain("Error getting vacuum status");
+    // python-roborock is imported as `roborock`; `python_roborock` never existed.
+    expect(text).not.toContain("python_roborock");
   }, 30_000);
 
   test("rejects unknown tools", async () => {
