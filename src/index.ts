@@ -1,218 +1,110 @@
 #!/usr/bin/env bun
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  type Tool,
-} from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+
+const deviceIdSchema = z
+  .string()
+  .optional()
+  .describe("Device ID of the vacuum (optional if only one device)");
+
+type DeviceArgs = { device_id?: string };
 
 class RoborockMCPServer {
-  private server: Server;
+  private server: McpServer;
 
   constructor() {
-    this.server = new Server(
-      {
-        name: "roborock-mcp-server",
-        version: "1.0.0",
-      },
-      {
-        capabilities: {
-          tools: {},
-        },
-      },
-    );
-
-    this.setupToolHandlers();
-  }
-
-  private setupToolHandlers(): void {
-    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return {
-        tools: this.getTools(),
-      };
+    this.server = new McpServer({
+      name: "roborock-mcp-server",
+      version: "1.0.0",
     });
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-      const { name, arguments: args } = request.params;
-
-      switch (name) {
-        case "vacuum_status":
-          return this.getVacuumStatus(args);
-        case "start_cleaning":
-          return this.startCleaning(args);
-        case "stop_cleaning":
-          return this.stopCleaning(args);
-        case "pause_cleaning":
-          return this.pauseCleaning(args);
-        case "return_to_dock":
-          return this.returnToDock(args);
-        case "locate_vacuum":
-          return this.locateVacuum(args);
-        case "get_map":
-          return this.getMap(args);
-        case "zone_clean":
-          return this.zoneClean(args);
-        case "room_clean":
-          return this.roomClean(args);
-        default:
-          throw new Error(`Unknown tool: ${name}`);
-      }
-    });
+    this.registerTools();
   }
 
-  private getTools(): Tool[] {
-    return [
+  private registerTools(): void {
+    const deviceOnlyTools: Array<{
+      name: string;
+      description: string;
+      handler: (args: DeviceArgs) => Promise<CallToolResult>;
+    }> = [
       {
         name: "vacuum_status",
         description: "Get the current status of the Roborock vacuum",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.getVacuumStatus(args),
       },
       {
         name: "start_cleaning",
         description: "Start cleaning with the vacuum",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.startCleaning(args),
       },
       {
         name: "stop_cleaning",
         description: "Stop the current cleaning operation",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.stopCleaning(args),
       },
       {
         name: "pause_cleaning",
         description: "Pause the current cleaning operation",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.pauseCleaning(args),
       },
       {
         name: "return_to_dock",
         description: "Send the vacuum back to its charging dock",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.returnToDock(args),
       },
       {
         name: "locate_vacuum",
         description: "Play a sound to locate the vacuum",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
+        handler: (args) => this.locateVacuum(args),
       },
       {
         name: "get_map",
         description: "Get the current map from the vacuum",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-          },
-        },
-      },
-      {
-        name: "zone_clean",
-        description: "Clean specific zones",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-            zones: {
-              type: "array",
-              description: "Array of zone coordinates [x1, y1, x2, y2]",
-              items: {
-                type: "array",
-                items: { type: "number" },
-                minItems: 4,
-                maxItems: 4,
-              },
-            },
-          },
-          required: ["zones"],
-        },
-      },
-      {
-        name: "room_clean",
-        description: "Clean specific rooms",
-        inputSchema: {
-          type: "object",
-          properties: {
-            device_id: {
-              type: "string",
-              description:
-                "Device ID of the vacuum (optional if only one device)",
-            },
-            room_ids: {
-              type: "array",
-              description: "Array of room IDs to clean",
-              items: { type: "string" },
-            },
-          },
-          required: ["room_ids"],
-        },
+        handler: (args) => this.getMap(args),
       },
     ];
+
+    for (const { name, description, handler } of deviceOnlyTools) {
+      this.server.registerTool(
+        name,
+        { description, inputSchema: { device_id: deviceIdSchema } },
+        handler,
+      );
+    }
+
+    this.server.registerTool(
+      "zone_clean",
+      {
+        description: "Clean specific zones",
+        inputSchema: {
+          device_id: deviceIdSchema,
+          zones: z
+            .array(z.array(z.number()).min(4).max(4))
+            .describe("Array of zone coordinates [x1, y1, x2, y2]"),
+        },
+      },
+      (args) => this.zoneClean(args),
+    );
+
+    this.server.registerTool(
+      "room_clean",
+      {
+        description: "Clean specific rooms",
+        inputSchema: {
+          device_id: deviceIdSchema,
+          room_ids: z.array(z.string()).describe("Array of room IDs to clean"),
+        },
+      },
+      (args) => this.roomClean(args),
+    );
   }
 
-  private async getVacuumStatus(args: any) {
+  private async getVacuumStatus(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const status = await this.executeRoborockCommand("get_status", deviceId);
 
@@ -239,9 +131,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async startCleaning(args: any) {
+  private async startCleaning(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand(
         "start_cleaning",
@@ -273,9 +165,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async stopCleaning(args: any) {
+  private async stopCleaning(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand(
         "stop_cleaning",
@@ -307,9 +199,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async pauseCleaning(args: any) {
+  private async pauseCleaning(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand(
         "pause_cleaning",
@@ -341,9 +233,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async returnToDock(args: any) {
+  private async returnToDock(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand(
         "return_to_dock",
@@ -373,9 +265,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async locateVacuum(args: any) {
+  private async locateVacuum(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand("find_robot", deviceId);
 
@@ -404,9 +296,9 @@ class RoborockMCPServer {
     }
   }
 
-  private async getMap(args: any) {
+  private async getMap(args: DeviceArgs): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
 
       const result = await this.executeRoborockCommand("get_map", deviceId);
 
@@ -437,9 +329,11 @@ class RoborockMCPServer {
     }
   }
 
-  private async zoneClean(args: any) {
+  private async zoneClean(
+    args: DeviceArgs & { zones: number[][] },
+  ): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
       const zones = args.zones;
 
       const result = await this.executeRoborockCommand("zone_clean", deviceId, {
@@ -471,9 +365,11 @@ class RoborockMCPServer {
     }
   }
 
-  private async roomClean(args: any) {
+  private async roomClean(
+    args: DeviceArgs & { room_ids: string[] },
+  ): Promise<CallToolResult> {
     try {
-      const deviceId = args?.device_id || "default";
+      const deviceId = args.device_id || "default";
       const roomIds = args.room_ids;
 
       const result = await this.executeRoborockCommand("room_clean", deviceId, {
