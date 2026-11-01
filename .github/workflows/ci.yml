@@ -12,19 +12,16 @@ jobs:
 
     strategy:
       matrix:
-        deno-version: ["2.x"]
         python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ matrix.deno-version }}
+      - name: Setup Bun (via mise)
+        uses: jdx/mise-action@v5
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -33,19 +30,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install python-roborock
 
-      - name: Check TypeScript formatting
-        run: deno fmt --check
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
-      - name: Lint TypeScript
-        run: deno lint
+      - name: Check formatting and lint
+        run: bun run ci
 
       - name: Type check
-        run: deno check src/index.ts
+        run: bun run check
+
+      - name: Test
+        run: bun test
 
       - name: Test basic functionality
         run: |
           # Test that the server can start without errors
-          timeout 10s deno task start || [ $? -eq 124 ]
+          timeout 10s bun run start || [ $? -eq 124 ]
         env:
           ROBOROCK_USERNAME: "test"
           ROBOROCK_PASSWORD: "test"
@@ -53,12 +53,16 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v1
-        with:
-          deno-version: 2.x
+      - name: Setup Bun (via mise)
+        uses: jdx/mise-action@v5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
       - name: Security audit
-        run: deno check src/index.ts
+        # Non-blocking for now: @modelcontextprotocol/sdk@0.5.0 has known
+        # advisories that only a 1.x upgrade (a breaking API change) resolves.
+        continue-on-error: true
+        run: bun audit

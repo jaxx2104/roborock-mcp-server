@@ -5,16 +5,22 @@ code in this repository.
 
 ## Development Commands
 
-- Start the server: `deno task start`
-- Development mode with auto-reload: `deno task dev`
-- Direct execution: `deno run --allow-net --allow-read --allow-env src/index.ts`
+Runtime is Bun, version-managed by mise (`mise.toml` / `mise.lock`).
+
+- Install dependencies: `bun install`
+- Start the server: `bun run start`
+- Development mode with auto-reload: `bun run dev`
+- Direct execution: `bun run src/index.ts`
+- Type check: `bun run check` (`tsc --noEmit`)
+- Lint / format: `bun run lint` / `bun run fmt` (Biome; `bun run ci` checks both)
+- Tests: `bun test` (`bun:test`, files under `test/`)
 
 ## Architecture
 
 This is a **Model Context Protocol (MCP) server** that provides Claude with the
 ability to control Roborock vacuum cleaners. The architecture consists of:
 
-- **MCP Server Layer** (`src/index.ts`): TypeScript/Deno server implementing the
+- **MCP Server Layer** (`src/index.ts`): TypeScript/Bun server implementing the
   MCP protocol
 - **Python Integration Layer**: Executes Python scripts using the
   `python-roborock` library
@@ -28,7 +34,7 @@ ability to control Roborock vacuum cleaners. The architecture consists of:
   its own handler
 - **Python script generation**: Dynamically generates Python scripts for each
   operation
-- **Command execution**: Uses `Deno.Command` to execute Python scripts and parse
+- **Command execution**: Uses `Bun.spawn` to execute Python scripts and parse
   JSON responses
 
 ### Tool Architecture
@@ -50,7 +56,7 @@ Required environment variables:
 Required external dependencies:
 
 - Python 3.8+ with `python-roborock` package installed
-- Deno 1.37+
+- Bun (see `mise.toml`)
 
 ## Available Tools
 
