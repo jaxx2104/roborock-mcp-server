@@ -546,7 +546,7 @@ class RoborockMCPServer {
 import asyncio
 import json
 import os
-from python_roborock import RoborockClient
+from roborock import RoborockClient
 
 async def main():
     try:
